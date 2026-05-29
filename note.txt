@@ -6,14 +6,14 @@ STEPS:
 - Configure JPA (-)
 
 - Organize project structure and implement classes:
-+ com.fpt.controller (AuthController - Servlet)
-+ com.fpt.dal (AccountDal)
++ com.fpt.controller (AuthController - Servlet) (-)
++ com.fpt.dal (AccountDal) (-)
 + com.fpt.entity (Account) (-)
 
-- Design UI (JSP):
-+ home.jsp
-+ index.jsp
-+ register.jsp
-+ login.jsp
+- Design UI (JSP): 
++ home.jsp (-) 
++ index.jsp (-)
++ register.jsp (-)
++ login.jsp (-)
 
 
