@@ -20,6 +20,21 @@ public class Account {
     @Column(name = "role", nullable = false, length = 20)
     private String role;
 
+    public Account() {}
+
+    public Account(String username, String password, String role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
+    public Account(Integer id, String username, String password, String role) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
     public Integer getId() {
         return id;
     }
