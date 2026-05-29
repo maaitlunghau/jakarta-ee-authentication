@@ -13,25 +13,40 @@ public class AccountDal {
     // 2.2. checkLogin() method
     public boolean checkLogin(String username, String password) {
         EntityManager em = emf.createEntityManager();
-        Account account = em.find(Account.class, username);
-        em.close();
-
-        return account != null && BCrypt.checkpw(password, account.getPassword());
+        try {
+            Account account = em.createQuery("SELECT a FROM Account a WHERE a.username = :user", Account.class)
+                    .setParameter("user", username)
+                    .getSingleResult();
+            return BCrypt.checkpw(password, account.getPassword());
+        } catch (Exception e) {
+            return false;
+        } finally {
+            em.close();
+        }
     }
 
     // 2.3. registerAccount() method
     public boolean registerAccount(String username, String rawPassword) {
         EntityManager em = emf.createEntityManager();
-        if (em.find(Account.class, username) != null)
+        try {
+            Long count = em.createQuery("SELECT COUNT(a) FROM Account a WHERE a.username = :user", Long.class)
+                    .setParameter("user", username)
+                    .getSingleResult();
+            
+            if (count > 0) return false;
+
+            em.getTransaction().begin();
+            String hashedPass = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
+            em.persist(new Account(username, hashedPass, "user"));
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             return false;
-
-        em.getTransaction().begin();
-        String hashedPass = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
-        em.persist(new Account(username, hashedPass, "user"));
-        em.getTransaction().commit();
-
-        em.close();
-
-        return true;
+        } finally {
+            em.close();
+        }
     }
 }
